@@ -33,8 +33,8 @@ const userSignUp = asyncHandler(async(req,res)=>{
 
    const user = await User.create(
     {
-        userName,
-        email,
+        userName: userName.toLowerCase(),
+        email: email.toLowerCase(),
         password
     }
     )
@@ -54,7 +54,69 @@ const userSignUp = asyncHandler(async(req,res)=>{
 
 })
 
+const userSignIn =  asyncHandler(async(req,res)=>{
+
+    const{userName,email,password} = req.body
+
+    if(!userName && !email)
+    {
+        res.json(
+            new ApiError(400, "username or password is required")
+        )
+    }
+
+    const user = await User.findOne(
+        {
+        $or: [{userName}, {email}]
+        }
+    )
+
+    if(!user)
+    {
+        res.json(
+            new ApiError(404, "User does not Exist")
+        )
+    }
+
+    const isPasswordCorrect =await user.isPasswordCorrect(password)
+
+
+    if(!isPasswordCorrect)
+    {
+        res.json(
+            new ApiError(401,"Incorrect Password")
+        )
+    }
+    
+    const token = await user.generateToken()
+
+
+
+    const loggedInUser = await User.findById(user._id).select("-password")
+
+    const option = {
+        httpOnly :  true,
+        secure : true
+    }
+
+
+
+    return res.status(200)
+    .cookie("token", token , option)
+    .json(
+        new ApiResponse(200,
+            {
+                user : loggedInUser , token
+            },"User Logged In Successfully")
+    )
+
+
+
+
+})
+
 export {
     test,
-    userSignUp
+    userSignUp,
+    userSignIn
 }
