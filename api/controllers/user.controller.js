@@ -18,7 +18,8 @@ const userSignUp = asyncHandler(async(req,res)=>{
     [userName,email,password].some((field) => field?.trim() === "")
    )
    {
-    throw new ApiError(400, "All Field are Required")
+     res.json(
+     new ApiError(400, "All Field are Required"))
    }
 
    const existedUser = await User.findOne({
@@ -27,7 +28,7 @@ const userSignUp = asyncHandler(async(req,res)=>{
 
    if(existedUser)
    {
-    throw new ApiError(409, "User Existed")
+    res.json(new ApiError(409, "User Existed"))
    }
 
    const user = await User.create(
@@ -44,7 +45,7 @@ const userSignUp = asyncHandler(async(req,res)=>{
 
     if(!createdUser)
     {
-        throw new ApiError(500, "Something wrong happen while registering the user")
+        res.json( new ApiError(500, "Something wrong happen while registering the user"))
     }
 
     return res.status(201).json(
