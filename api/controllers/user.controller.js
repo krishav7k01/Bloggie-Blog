@@ -115,8 +115,92 @@ const userSignIn =  asyncHandler(async(req,res)=>{
 
 })
 
+const google = asyncHandler(async(req,res)=>{
+
+    const {email, name, googlePhotoUrl} = req.body;
+
+    if(!email)
+    {
+        res.json(
+            new ApiError(400,"Auth Not Working")
+        )
+    }
+    const user = await User.findOne({email}).select("-password")
+    if(user)
+    {
+        const token = user.generateToken()
+
+        const option = {
+            httpOnly :  true,
+            secure : true
+        }
+    
+
+       return  res.status(200)
+        .cookie('token', token, option)
+        .json(
+            new ApiResponse(200,{
+                user : user , token
+            },"Logged in Succesfully")
+        )
+        
+    }
+    else
+    {
+        const generatedPassword = Math.random().toString(36).slice(-8) +
+        Math.random().toString(36).slice(-8);
+
+        let userName = name.toLowerCase().split(' ').join('') + Math.random().toString(9).slice(-4)
+
+        let userNameExist = await User.findOne({userName})
+
+        while(userNameExist)
+        {
+            userName = name.toLowerCase().split(' ').join('') + Math.random().toString(9).slice(-5)
+            userNameExist = await User.findOne({userName})
+
+        }
+
+        const user = await User.create({
+
+            userName,
+            email,
+            password : generatedPassword,
+        })
+
+        const token = user.generateToken()
+
+        const signInUser = await User.findById(user._id).select("-password")
+
+        if(!signInUser)
+        {
+            res.json(
+                new ApiError(404,"Something Went Wrong")
+            )
+        }
+
+        const option = {
+            httpOnly :  true,
+            secure : true
+        }
+
+        console.log(signInUser)
+
+        return res.status(200)
+        .cookie('token', token, option)
+        .json(
+            new ApiResponse(200,{
+                user : signInUser , token
+            },"Logged in Succesfully")
+        )
+
+    }
+
+})
+
 export {
     test,
     userSignUp,
-    userSignIn
+    userSignIn,
+    google
 }
