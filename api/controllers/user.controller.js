@@ -166,6 +166,7 @@ const google = asyncHandler(async(req,res)=>{
             userName,
             email,
             password : generatedPassword,
+            profilePhoto : googlePhotoUrl
         })
 
         const token = user.generateToken()
@@ -183,8 +184,6 @@ const google = asyncHandler(async(req,res)=>{
             httpOnly :  true,
             secure : true
         }
-
-        console.log(signInUser)
 
         return res.status(200)
         .cookie('token', token, option)
