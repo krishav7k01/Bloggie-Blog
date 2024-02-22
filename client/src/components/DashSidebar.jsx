@@ -17,7 +17,7 @@ const DashSidebar = () => {
   
     useEffect(()=>{
   
-      const urlParams = new URLSearchParams(location.search) //this will give us value from parmas after /dasboard
+      const urlParams = new URLSearchParams(location.search) //this will give us object from parmas after /dasboard
       const tabFromUrl = urlParams.get('tab');  //this will return ?tab=xx which ever value is there after =
       //? here act as seprator which means URl resource path has end
       if(tabFromUrl)

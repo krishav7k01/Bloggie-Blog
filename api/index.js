@@ -9,7 +9,7 @@ dotenv.config({
 connectDB().then(() =>{
     
     app.listen(3000, () =>{
-        console.log('Server is running on port 3000!s!sjadhshj')
+        console.log(`Server is Running`)
     })
 
 }).catch((err)=>{

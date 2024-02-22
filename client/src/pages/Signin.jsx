@@ -42,7 +42,7 @@ const Signin = () => {
 
       if(data.success === true)
       {   
-          dispatch(signInSuccess(data))
+          dispatch(signInSuccess(data.data.user))
           navigate('/')
       }
     }

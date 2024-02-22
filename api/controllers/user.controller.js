@@ -18,7 +18,7 @@ const userSignUp = asyncHandler(async(req,res)=>{
     [userName,email,password].some((field) => field?.trim() === "")
    )
    {
-     res.json(
+    return res.status(400).json(
      new ApiError(400, "All Field are Required"))
    }
 
@@ -28,7 +28,7 @@ const userSignUp = asyncHandler(async(req,res)=>{
 
    if(existedUser)
    {
-    res.json(new ApiError(409, "User Existed"))
+     return res.status(409).json(new ApiError(409, "User Existed"))
    }
 
    const user = await User.create(
@@ -45,7 +45,7 @@ const userSignUp = asyncHandler(async(req,res)=>{
 
     if(!createdUser)
     {
-        res.json( new ApiError(500, "Something wrong happen while registering the user"))
+       return res.status(500).json( new ApiError(500, "Something wrong happen while registering the user"))
     }
 
     return res.status(201).json(
@@ -60,7 +60,7 @@ const userSignIn =  asyncHandler(async(req,res)=>{
 
     if(!userName && !email)
     {
-        res.json(
+        return res.status(400).json(
             new ApiError(400, "username or password is required")
         )
     }
@@ -73,7 +73,7 @@ const userSignIn =  asyncHandler(async(req,res)=>{
 
     if(!user)
     {
-        res.json(
+       return  res.status(404).json(
             new ApiError(404, "User does not Exist")
         )
     }
@@ -83,12 +83,12 @@ const userSignIn =  asyncHandler(async(req,res)=>{
 
     if(!isPasswordCorrect)
     {
-        res.json(
+       return res.json(
             new ApiError(401,"Incorrect Password")
         )
     }
     
-    const token = await user.generateToken()
+    const token = user.generateToken()
 
 
 
@@ -121,14 +121,14 @@ const google = asyncHandler(async(req,res)=>{
 
     if(!email)
     {
-        res.json(
+       return res.status(400).json(
             new ApiError(400,"Auth Not Working")
         )
     }
     const user = await User.findOne({email}).select("-password")
     if(user)
     {
-        const token = user.generateToken()
+        const token = await user.generateToken()
 
         const option = {
             httpOnly :  true,
@@ -175,7 +175,7 @@ const google = asyncHandler(async(req,res)=>{
 
         if(!signInUser)
         {
-            res.json(
+            res.status(404).json(
                 new ApiError(404,"Something Went Wrong")
             )
         }
@@ -197,9 +197,93 @@ const google = asyncHandler(async(req,res)=>{
 
 })
 
+const userUpdate = asyncHandler(async (req,res) =>{
+
+    const{userName , email, password}  = req.body
+
+   
+        if(req.user._id !== req.params.userId)
+        {
+           return res.status(403).json(
+                new ApiError(403,"You are not allowed to update the user")
+            )
+        }
+
+        if (!userName.match(/^[a-zA-Z0-9]+$/)) {
+           
+           return res.status(403).json(
+                new ApiError(403, "Username cannot have Special Character")
+            )
+          }
+
+          const user = await User.findByIdAndUpdate(
+            req.user?._id,
+            {
+                $set:
+                {
+                    userName: userName?.trim().toLowerCase(),
+                    email : email?.trim().toLowerCase(),
+                }
+            },
+                {
+                    new: true
+                }
+            
+          ).select("-password")
+
+          return res
+          .status(200)
+          .json(
+            new ApiResponse(200, user , "Details Updated Succefully")
+          )
+
+})
+
+const deleteUser = asyncHandler(async (req,res) =>{
+
+    if(req.user._id !== req.params.userId)
+    {
+        return res.status(401).json(
+            new ApiError(401,"You are not allowed to Delete the User")
+        )
+    }
+
+    const delUser = await User.findByIdAndDelete(req.params.userId)
+
+    if(!deleteUser)
+    {
+        return res.status(404).json(
+            new ApiError(404, "Something went Wrong")
+        )
+    }
+
+   return res.clearCookie('token').status(200).json(
+        new ApiResponse(200,null,"User Deleted Succesfully")
+    )
+})
+
+const userLogout = asyncHandler(async (req,res) =>{
+
+    if(req.user._id !== req.params.userId)
+    {
+        return res.status(401).json(new ApiError(401,"You are not allowed to SignOut"))
+    } 
+
+    return res.clearCookie('token').status(200).json(
+        new ApiResponse(200,null,"User Deleted Succesfully")
+    )
+
+
+
+})
+
 export {
     test,
     userSignUp,
     userSignIn,
-    google
+    google,
+    userUpdate,
+    deleteUser,
+    userLogout
+    
 }
