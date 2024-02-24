@@ -2,6 +2,7 @@ import User from "../models/user.model.js"
 import { ApiResponse } from "../utils/apiResponse.js"
 import { ApiError } from "../utils/apierror.js"
 import { asyncHandler } from "../utils/asyncHandler.js"
+import { uploadOnCloudinary } from "../utils/cloudinary.js"
 
 const test = asyncHandler(async(req,res)=>{
     res.json({
@@ -199,7 +200,7 @@ const google = asyncHandler(async(req,res)=>{
 
 const userUpdate = asyncHandler(async (req,res) =>{
 
-    const{userName , email, password}  = req.body
+    const{userName , email}  = req.body
 
    
         if(req.user._id !== req.params.userId)
@@ -215,6 +216,12 @@ const userUpdate = asyncHandler(async (req,res) =>{
                 new ApiError(403, "Username cannot have Special Character")
             )
           }
+        
+          const profileLocalPath = req.file?.path
+
+          console.log(profileLocalPath)
+
+          const uploadProfile = await uploadOnCloudinary(profileLocalPath)
 
           const user = await User.findByIdAndUpdate(
             req.user?._id,
@@ -223,6 +230,7 @@ const userUpdate = asyncHandler(async (req,res) =>{
                 {
                     userName: userName?.trim().toLowerCase(),
                     email : email?.trim().toLowerCase(),
+                    profilePhoto : uploadProfile?.url || req.user.profilePhoto
                 }
             },
                 {
@@ -276,6 +284,8 @@ const userLogout = asyncHandler(async (req,res) =>{
 
 
 })
+
+
 
 export {
     test,

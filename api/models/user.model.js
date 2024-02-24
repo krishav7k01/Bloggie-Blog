@@ -23,6 +23,10 @@ const userSchema = new mongoose.Schema(
             type:String,
             default:
                 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png'
+        },
+        isAdmin:{
+            type:Boolean,
+            default: false
         }
      },
      { 
@@ -48,6 +52,8 @@ userSchema.methods.generateToken = function(){
             _id : this._id,
             email: this.email,
             userName : this.userName,
+            isAdmin: this.isAdmin,
+            profilePhoto : this.profilePhoto
 
         },process.env.TOKEN_SECRET_KEY
     )

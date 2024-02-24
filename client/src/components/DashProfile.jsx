@@ -1,50 +1,53 @@
-import { Alert, Button, Modal, TextInput } from 'flowbite-react'
+import { Alert, Button, Modal, TextInput, Spinner } from 'flowbite-react'
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { deleteFailure, deleteSuccess, signoutSuccess, updateFailure, updateSuccess } from '../redux/user/userSlice'
+import { deleteFailure, deleteStart, deleteSuccess, signoutSuccess, updateFailure, updateStart, updateSuccess } from '../redux/user/userSlice'
 import { useNavigate } from 'react-router-dom'
 import { HiOutlineExclamationCircle } from 'react-icons/hi';
+import axios from 'axios'
+import { useRef } from 'react'
 
 
 const DashProfile = () => {
 
-    const{currentUser} = useSelector(state => state.user)
+    const{currentUser,loading, error } = useSelector(state => state.user)
     
-    const[formData, setFormData] = useState({userName : currentUser.userName , email : currentUser.email })
-    const[error,setError] = useState()
     const[success,setSuccess] = useState()
     const[showModal,setShowModal] = useState(false)
+    const[image, setImage] = useState()
+    const[imageUrl, setImageUrl ] = useState(currentUser.profilePhoto)
+    const filePicker = useRef()
 
     const navigate = useNavigate()
     const dispatch = useDispatch()
     
 
-    const handleChange = (e) =>{
-
-      setFormData({...formData , [e.target.id] : e.target.value})
-
-    }
-
     const handleSubmit = async (e) =>{
 
       e.preventDefault()
-      setError(null)
       setSuccess(null)
+     
+
+    let formData = new FormData()
+
+    formData.append('userName' , e.target.userName.value)
+    formData.append('email' , e.target.email.value)
+    formData.append('profilePhoto' , image)
 
     
 
+
       try{
 
-        const res = await fetch(`/v1/api/user/update/${currentUser._id}`,
+        dispatch(updateStart())
+        const res = await axios.post(`/v1/api/user/update/${currentUser._id}`,formData,
         {
-          method: 'PUT',
-          headers : {
-            'Content-Type' : 'application/json',
-          },
-          body : JSON.stringify(formData),
-        });
+        headers: { 'content-type' : 'multipart/form-data'
+        }
 
-        const data = await res.json()
+        })
+
+        const data = await res.data
 
         if(data.success == true)
         {
@@ -56,8 +59,7 @@ const DashProfile = () => {
         else
         {
 
-            dispatch(updateFailure(data.message));
-            setError(data.message)
+            dispatch(updateFailure(data.message))
 
         }
         
@@ -68,7 +70,6 @@ const DashProfile = () => {
         {
 
           dispatch(updateFailure(error.message));
-          setError(error.message);
 
         }
 
@@ -84,6 +85,7 @@ const DashProfile = () => {
 
       try{
 
+          dispatch(deleteStart)
           const res = await fetch(`/v1/api/user/delete/${currentUser._id}`,
           {
             method: 'DELETE'
@@ -146,20 +148,32 @@ const DashProfile = () => {
     <div className='max-w-lg mx-auto p-3 w-full'>
       
       <h1 className='my-12 text-center font-semibold text-4xl'>Profile</h1>
-      <form className='flex flex-col gap-8' onSubmit={handleSubmit}>
+      <form className='flex flex-col gap-4' onSubmit={(handleSubmit)} encType='multipart/form-data'>
         <div className="w-32 h-32 self-center cursor-pointer shadow-md overflow-hidden rounded-full">
-
-
-        <img src={currentUser.profilePhoto} alt='User' className='rounded-full w-full h-hull object-cover border-8 border-[lightgray]' />
+        <img src={imageUrl} alt='User' className='rounded-full w-full h-hull object-cover border-8 border-[lightgray]' onClick={() => filePicker.current.click()}/>
         </div>
-        <TextInput type='text' id='userName' placeholder='username' defaultValue={currentUser.userName} onChange={handleChange}/>
-        <TextInput type='email' id='email' placeholder='username' defaultValue={currentUser.email} onChange={handleChange}/> 
 
-        <Button type='submit' gradientDuoTone='purpleToBlue' outline> Update</Button>
+        <input type='file' id='profilePhoto' onChange={(e) => {setImage(e.target.files[0]); setImageUrl(URL.createObjectURL(e.target.files[0]))} } ref={filePicker} hidden></input>
+        <TextInput type='text' id='userName' placeholder='username' defaultValue={currentUser.userName} />
+        <TextInput type='email' id='email' placeholder='username' defaultValue={currentUser.email} /> 
+
+        <Button type='submit' gradientDuoTone='purpleToBlue' outline disabled={loading}>{
+    loading ? (
+      <>
+      <Spinner size='sm'/> 
+       <span className='pl-3'>Loading...</span>
+       </>)
+        : 'Update the User'
+  
+  }</Button>
+        { currentUser.isAdmin && <Button type='button' gradientDuoTone='purpleToBlue' outline onClick={() =>{
+          navigate('/create-post')
+        }}>Create a Post</Button>}
       </form>
+      
       <div className='text-red-500 flex justify-between mt-5'>
         <span className='cursor-pointer' onClick={() => setShowModal(true)}>Delete Account</span> 
-        <span className='cursor-pointer' onClick={handleLogout}>Sign Out</span> 
+        <span className='cursor-pointer ' onClick={handleLogout}>Sign Out</span> 
 
       </div>
 
