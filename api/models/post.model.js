@@ -30,6 +30,10 @@ const postSchema = new mongoose.Schema(
             required: true,
             unique: true,
           },
+          content: {
+            type: String,
+            required: true,
+          },
 
 
     },

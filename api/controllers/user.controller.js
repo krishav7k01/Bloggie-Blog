@@ -219,8 +219,6 @@ const userUpdate = asyncHandler(async (req,res) =>{
         
           const profileLocalPath = req.file?.path
 
-          console.log(profileLocalPath)
-
           const uploadProfile = await uploadOnCloudinary(profileLocalPath)
 
           const user = await User.findByIdAndUpdate(
