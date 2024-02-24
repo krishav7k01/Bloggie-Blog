@@ -9,11 +9,13 @@ import {
     HiAnnotation,
     HiChartPie,
   } from 'react-icons/hi';
+import { useSelector } from 'react-redux';
 
 const DashSidebar = () => {
 
     const location = useLocation();
     const[tab, setTab] = useState('');
+    const {currentUser} = useSelector(state => state.user)
   
     useEffect(()=>{
   
@@ -36,19 +38,31 @@ const DashSidebar = () => {
                 <NavLink to='/dashboard?tab=profile'>
                 <Sidebar.Item active={tab === 'profile'} 
                 icon={HiUser}
-                label='User'
+                label={currentUser.isAdmin ? "Admin" : "User"}
                 labelColor='dark'
                 as='div'> 
                     Profile
                 </Sidebar.Item>
                 </NavLink>
+
+              { currentUser.isAdmin &&
+            <NavLink to='/dashboard?tab=posts'>
+            <Sidebar.Item active={tab === 'profile'} 
+            icon={HiUser}
+            labelColor='dark'
+            as='div'> 
+                Posts
+            </Sidebar.Item>
+           </NavLink>}
+
+
                 <Sidebar.Item 
                 icon={HiArrowSmRight}
                 className='cursor-pointer' > 
                     Sign Out
                 </Sidebar.Item>
 
-
+               
 
             </Sidebar.ItemGroup>
 

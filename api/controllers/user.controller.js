@@ -276,7 +276,7 @@ const userLogout = asyncHandler(async (req,res) =>{
     } 
 
     return res.clearCookie('token').status(200).json(
-        new ApiResponse(200,null,"User Deleted Succesfully")
+        new ApiResponse(200,"User Logout Succesfully")
     )
 
 
