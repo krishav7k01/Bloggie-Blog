@@ -47,7 +47,7 @@ const DashSidebar = () => {
 
               { currentUser.isAdmin &&
             <NavLink to='/dashboard?tab=posts'>
-            <Sidebar.Item active={tab === 'profile'} 
+            <Sidebar.Item active={tab === 'posts'} 
             icon={HiUser}
             labelColor='dark'
             as='div'> 

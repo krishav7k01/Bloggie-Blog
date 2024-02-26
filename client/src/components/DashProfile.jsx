@@ -56,20 +56,12 @@ const DashProfile = () => {
           setSuccess(data.message)
 
         }
-        else
-        {
-
-            dispatch(updateFailure(data.message))
-
-        }
-        
-
 
       }
       catch(error)
         {
 
-          dispatch(updateFailure(error.message));
+          dispatch(updateFailure(error.response.data.message));
 
         }
 
