@@ -139,9 +139,36 @@ return res.status(200)
 
 })
 
+const deletePost = asyncHandler(async(req,res)=>{
+
+    if(!req.user.isAdmin || req.user._id !== req.params.userId)
+    {
+        return res.status(401).json(
+            new ApiError(401,"Unaithorized Access")
+        )
+    }
+
+    const deletedPost =  await Post.findByIdAndDelete(req.params.postId)
+
+    if(!deletedPost)
+    {
+        return res.status(400).json(
+            new ApiError(400,"Something Went Wrong")
+        )
+    }
+
+    return res.status(200).json(
+        new ApiResponse(200,"Post Deleted Successfully")
+    )
+
+
+
+})
+
 
 
 export {test,
         createPost ,
-        getPosts
+        getPosts,
+        deletePost
 }
