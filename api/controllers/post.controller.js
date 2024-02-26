@@ -83,6 +83,8 @@ const createPost = asyncHandler(async(req,res)=>{
         new ApiResponse(200,uploadedPost,"Post Uploaded Succesfully")
     )
 
+    
+
 
 
 
@@ -165,10 +167,92 @@ const deletePost = asyncHandler(async(req,res)=>{
 
 })
 
+const updatePost = asyncHandler(async(req,res) =>{
+
+    const{content , title} = req.body
+
+
+if(!req.user.isAdmin || req.user._id !== req.params.userId )
+{
+    return res.status(401).json(
+        new ApiError(401,"Unauthorized")
+    )
+}
+
+if(content == "undefined")
+    {
+        return res.status(401).json(
+            new ApiError(401, "Content is Required")
+        )
+    }
+
+
+    if([title,content].some((field) => field?.trim() === ''))
+    {
+        return res.status(401).json(
+            new ApiError(401, "title and Coontent is Required")
+        )
+    }
+
+const slug = req.body.title
+    .split(' ')
+    .join('-')
+    .toLowerCase()
+    .replace(/[^a-zA-Z0-9-]/g, '');
+
+    const postPhotoPath = req.file?.path
+
+    const uploadPost = await uploadOnCloudinary(postPhotoPath)
+
+    const updatedPost = await Post.findByIdAndUpdate(req.params.postId, 
+        
+        {
+
+            $set : {
+
+                
+                ...req.body,
+                userId:req.user._id,
+                slug,
+                postPhoto : uploadPost.url 
+
+
+
+            }
+        },
+        {
+            new : true
+        }
+        
+
+        
+        )
+
+
+        if(!updatedPost)
+        {   
+
+            return res.status(400).json(
+                new ApiError(400, "Something Went Wrong")
+            )
+
+        }
+
+        return res.status(200).json(
+            new ApiResponse(200,updatedPost,"Post Updated Succesffully")
+        )
+
+
+
+
+
+
+})
 
 
 export {test,
         createPost ,
         getPosts,
-        deletePost
+        deletePost,
+        updatePost
 }

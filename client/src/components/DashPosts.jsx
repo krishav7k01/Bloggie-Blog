@@ -19,7 +19,7 @@ const DashPosts = () => {
     const fetchPost = async () =>{
 
       try {
-        const res = await axios.get(`/v1/api/post/getposts?=${currentUser._id}`)
+        const res = await axios.get(`/v1/api/post/getposts?userId=${currentUser._id}`)
   
         const data = await res.data
 
