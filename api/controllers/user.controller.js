@@ -256,14 +256,14 @@ const deleteUser = asyncHandler(async (req,res) =>{
 
     const delUser = await User.findByIdAndDelete(req.params.userId)
 
-    if(!deleteUser)
+    if(!delUser)
     {
         return res.status(404).json(
             new ApiError(404, "Something went Wrong")
         )
     }
 
-   return res.clearCookie('token').status(200).json(
+   return res.status(200).clearCookie('token').json(
         new ApiResponse(200,null,"User Deleted Succesfully")
     )
 })
@@ -324,10 +324,37 @@ const getUsers = asyncHandler(async(req,res) =>{
         }
     )
 
-    res.status(200).json
+    return res.status(200).json
     (new ApiResponse(200,{
          userWithoutPassword , totalUsers , oneMonthAgoUsers
     },"Users Fetched Successfully"))
+
+
+})
+
+const adminDeleteUser = asyncHandler(async(req,res) => {
+
+
+   
+    if(!req.user.isAdmin)
+    {
+        res.status(401).json(
+            new ApiError(401,"Unathorized")
+        )
+    }
+
+    const deleteUser = await User.findByIdAndDelete(req.params.userId)
+
+    if(!deleteUser)
+    {
+        res.status(400).json(
+            new ApiError(400,"Something Went Wrong")
+        )
+    }
+
+    return res.status(200).json(
+        new ApiResponse(200,"User Deleted Successfully")
+    )
 
 
 })
@@ -342,6 +369,7 @@ export {
     userUpdate,
     deleteUser,
     userLogout,
-    getUsers
+    getUsers,
+    adminDeleteUser
     
 }

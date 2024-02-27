@@ -88,7 +88,7 @@ const DashProfile = () => {
           if(data.success == true)
           {
             navigate("/")
-            dispatch(deleteSuccess(data.data))
+            dispatch(deleteSuccess(null))
           }
           else
           {

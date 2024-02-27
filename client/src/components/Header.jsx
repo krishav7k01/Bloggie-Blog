@@ -1,6 +1,6 @@
 import { Avatar, Button, Dropdown, Navbar , TextInput} from 'flowbite-react'
 import React from 'react'
-import { NavLink, useLocation} from 'react-router-dom'
+import { NavLink, useLocation, useNavigate} from 'react-router-dom'
 import {AiOutlineSearch } from "react-icons/ai"
 import { FaMoon, FaSun } from 'react-icons/fa';
 import {useSelector, useDispatch} from 'react-redux'
@@ -10,6 +10,8 @@ import { signoutSuccess } from '../redux/user/userSlice';
 
 
 const Header = () => {
+
+    const navigate = useNavigate()
 
     const handleLogout = async(e) =>{
 
@@ -22,9 +24,9 @@ const Header = () => {
   
           const data =  await res.json()
   
-          if(data.success)
+          if(data.success === true)
           {
-            dispatch(signoutSuccess(data.data))
+            dispatch(signoutSuccess(null))
             navigate("/")
           }
   

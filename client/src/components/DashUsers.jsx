@@ -12,7 +12,7 @@ const DashUsers = () => {
     const[getUser,setGetUsers] = useState([])
     const {currentUser} = useSelector(state => state.user)
     const[showMore,setShowMore] = useState(true)
-    const[postId,setPostId]= useState(null)
+    const[userId,setUserId]= useState(null)
     const[showModal, setShowModal]= useState(false)     
 
 
@@ -85,14 +85,14 @@ const DashUsers = () => {
     
           setShowModal(false)
          try {
-           const res = await axios.delete(`/v1/api/post/deleteuser/${postId}/${currentUser._id}`)
+           const res = await axios.delete(`/v1/api/user/admindelete/${userId}`)
      
            const data = res.data
      
            if(data.success === true)
            {
              
-            setUserPost((prev) => prev.filter((post) => post._id !== postId ))
+            setGetUsers((prev) => prev.filter((user) => user._id !== userId ))
              
            }
      
@@ -159,7 +159,7 @@ const DashUsers = () => {
                     </Table.Cell>
     
                     <Table.Cell>
-                    <span className='font-medium text-red-500 hover:underline cursor-pointer' onClick={(e) => { setUserId(post._id); setShowModal(true)   }}>Delete</span></Table.Cell>
+                    <span className='font-medium text-red-500 hover:underline cursor-pointer' onClick={(e) => { setUserId(User._id); setShowModal(true)   }}>Delete</span></Table.Cell>
     
                  
     
@@ -178,7 +178,7 @@ const DashUsers = () => {
               ) }
             </>
           )  : 
-          (<p> You Have No Posts</p>) }
+          (<p> You Have No Users</p>) }
     
               <Modal
               show={showModal}
