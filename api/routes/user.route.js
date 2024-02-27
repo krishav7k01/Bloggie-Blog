@@ -1,5 +1,5 @@
 import express from 'express'
-import { deleteUser, google, test, userLogout, userSignIn, userSignUp, userUpdate } from '../controllers/user.controller.js';
+import { deleteUser, getUsers, google, test, userLogout, userSignIn, userSignUp, userUpdate } from '../controllers/user.controller.js';
 import { verifyToken } from '../utils/verifyUser.js';
 import {upload} from '../middleware/multer.middleware.js'
 
@@ -12,6 +12,7 @@ router.post('/google',google)
 router.route('/update/:userId').post( verifyToken , upload.single("profilePhoto") ,userUpdate)
 router.delete('/delete/:userId',verifyToken , deleteUser)
 router.post('/logout/:userId',verifyToken, userLogout)
+router.get('/getusers',verifyToken,getUsers)
 
 
 export default router

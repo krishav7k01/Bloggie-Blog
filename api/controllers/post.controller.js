@@ -212,7 +212,6 @@ const slug = req.body.title
 
                 
                 ...req.body,
-                userId:req.user._id,
                 slug,
                 postPhoto : uploadPost.url 
 

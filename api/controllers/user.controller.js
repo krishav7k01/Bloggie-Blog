@@ -283,6 +283,55 @@ const userLogout = asyncHandler(async (req,res) =>{
 
 })
 
+const getUsers = asyncHandler(async(req,res) =>{
+
+    if(!req.user.isAdmin)
+    {
+        res.status(401).json(
+            new ApiError(401,"Unathorized User")
+        )
+    }
+
+    const startIndex = parseInt(req.query.startIndex) || 0;
+    const limit = parseInt(req.query.limit) || 9;
+    const sortDirection = req.query.order === 'asc' ? 1 : -1;
+
+    const users = await User.find()
+    .sort({updatedAt : sortDirection})
+    .limit(limit)
+    .skip(startIndex)
+
+    const userWithoutPassword = users.map((user) =>{
+
+       const{password , ...rest} = user._doc;
+       return rest
+
+    })
+
+    const totalUsers = await User.countDocuments();
+
+    const now = new Date()
+
+    const oneMonthAgo = new Date(
+        now.getFullYear(),
+        now.getMonth() - 1,
+        now.getDate()
+    )
+
+    const oneMonthAgoUsers = await User.countDocuments(
+        {
+            createdAt:{$gte : oneMonthAgo}
+        }
+    )
+
+    res.status(200).json
+    (new ApiResponse(200,{
+         userWithoutPassword , totalUsers , oneMonthAgoUsers
+    },"Users Fetched Successfully"))
+
+
+})
+
 
 
 export {
@@ -292,6 +341,7 @@ export {
     google,
     userUpdate,
     deleteUser,
-    userLogout
+    userLogout,
+    getUsers
     
 }

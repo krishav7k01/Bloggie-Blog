@@ -55,6 +55,17 @@ const DashSidebar = () => {
             </Sidebar.Item>
            </NavLink>}
 
+           { currentUser.isAdmin &&
+            <NavLink to='/dashboard?tab=users'>
+            <Sidebar.Item active={tab === 'users'} 
+            icon={HiUser}
+            labelColor='dark'
+            as='div'> 
+                Users
+            </Sidebar.Item>
+           </NavLink>}
+
+
 
                 <Sidebar.Item 
                 icon={HiArrowSmRight}
