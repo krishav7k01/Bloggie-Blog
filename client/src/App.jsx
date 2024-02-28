@@ -12,6 +12,7 @@ import Project from './pages/Project.jsx';
 import AdminPrivateRoute from './components/AdminPrivateRoute.jsx';
 import CreatePost from './pages/CreatePost.jsx';
 import UpdatePost from './pages/UpdatePost.jsx';
+import PostPage from './pages/PostPage.jsx';
 
 
 function App() {
@@ -32,6 +33,7 @@ function App() {
       <Route path="/update-post/:postId" element={<UpdatePost />}/>
       </Route>
       <Route path="/projects" element={<Project/>}/>
+      <Route path="/post/:postSlug" element={<PostPage/>}/>
     </Routes>
     <Footer/>
   </>

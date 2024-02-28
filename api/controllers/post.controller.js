@@ -69,7 +69,7 @@ const createPost = asyncHandler(async(req,res)=>{
         {
             slug:slug
         }
-    )
+    ).select("-postPhotoPublicId")
 
     if(!uploadedPost)
     {
@@ -119,6 +119,7 @@ const getPosts = asyncHandler(async(req,res) => {
     }).sort({updatedAt : sortDirection})
     .skip(startIndex)
     .limit(limit)
+    .select("-postPhotoPublicId")
 
     const totalPosts = await Post.countDocuments();
 
@@ -266,7 +267,7 @@ const slug = req.body.title
         
 
         
-        )
+        ).select("-postPhotoPublicId")
 
 
         if(!updatedPost)
@@ -288,6 +289,8 @@ const slug = req.body.title
 
 
 })
+
+
 
 
 export {test,
