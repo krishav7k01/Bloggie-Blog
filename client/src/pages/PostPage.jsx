@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { NavLink, useParams } from 'react-router-dom'
 import axios from 'axios'
 import { Button, Spinner } from 'flowbite-react'
+import CallToAction from '../components/CallToAction'
 
 const PostPage = () => {
 
@@ -86,8 +87,9 @@ if(!loading)
     dangerouslySetInnerHTML={{ __html: post.content}}>
     </div>
 
-
-
+    <div className='max-w-4xl mx-auto w-full'>
+        <CallToAction/>
+      </div>
 
 
     </main>
