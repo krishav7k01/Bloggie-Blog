@@ -3,6 +3,7 @@ import { ApiResponse } from "../utils/apiResponse.js"
 import { ApiError } from "../utils/apierror.js"
 import { asyncHandler } from "../utils/asyncHandler.js"
 import { uploadOnCloudinary } from "../utils/cloudinary.js"
+import { v2 as cloudinary } from "cloudinary";
 
 const test = asyncHandler(async(req,res)=>{
     res.json({
@@ -202,6 +203,7 @@ const userUpdate = asyncHandler(async (req,res) =>{
 
     const{userName , email}  = req.body
 
+
    
         if(req.user._id !== req.params.userId)
         {
@@ -216,6 +218,25 @@ const userUpdate = asyncHandler(async (req,res) =>{
                 new ApiError(403, "Username cannot have Special Character")
             )
           }
+
+          const userCheck = await User.findById(req.user?._id)
+
+
+          if(userCheck.profilePhotoPublicId)
+          {
+            const deletedProfilePhoto = await cloudinary.uploader
+            .destroy(userCheck.profilePhotoPublicId).then
+            (result => result  ).catch
+                   (error => error )
+
+            if(deletedProfilePhoto.http_code == 400)
+                {
+                    return res.status(400).json(
+                        new ApiError(400, "Something Went Wrong")
+                    )
+                }
+            
+          }
         
           const profileLocalPath = req.file?.path
 
@@ -228,7 +249,8 @@ const userUpdate = asyncHandler(async (req,res) =>{
                 {
                     userName: userName?.trim().toLowerCase(),
                     email : email?.trim().toLowerCase(),
-                    profilePhoto : uploadProfile?.url || req.user.profilePhoto
+                    profilePhoto : uploadProfile?.url || req.user.profilePhoto,
+                    profilePhotoPublicId : uploadProfile?.public_id || ""
                 }
             },
                 {
@@ -252,6 +274,24 @@ const deleteUser = asyncHandler(async (req,res) =>{
         return res.status(401).json(
             new ApiError(401,"You are not allowed to Delete the User")
         )
+    }
+
+    const userCheck = await User.findById(req.user?._id)
+
+    if(userCheck.profilePhotoPublicId)
+    {
+      const deletedProfilePhoto = await cloudinary.uploader
+      .destroy(userCheck.profilePhotoPublicId).then
+      (result => result  ).catch
+             (error => error )
+
+      if(deletedProfilePhoto.http_code == 400)
+          {
+              return res.status(400).json(
+                  new ApiError(400, "Something Went Wrong")
+              )
+          }
+      
     }
 
     const delUser = await User.findByIdAndDelete(req.params.userId)
@@ -341,6 +381,24 @@ const adminDeleteUser = asyncHandler(async(req,res) => {
         res.status(401).json(
             new ApiError(401,"Unathorized")
         )
+    }
+
+    const userCheck = await User.findById(req.params.userId)
+
+    if(userCheck.profilePhotoPublicId)
+    {
+      const deletedProfilePhoto = await cloudinary.uploader
+      .destroy(userCheck.profilePhotoPublicId).then
+      (result => result  ).catch
+             (error => error )
+
+      if(deletedProfilePhoto.http_code == 400)
+          {
+              return res.status(400).json(
+                  new ApiError(400, "Something Went Wrong")
+              )
+          }
+      
     }
 
     const deleteUser = await User.findByIdAndDelete(req.params.userId)

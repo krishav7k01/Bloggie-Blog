@@ -27,6 +27,9 @@ const userSchema = new mongoose.Schema(
         isAdmin:{
             type:Boolean,
             default: false
+        },
+        profilePhotoPublicId:{
+            type:String
         }
      },
      { 
@@ -53,7 +56,7 @@ userSchema.methods.generateToken = function(){
             email: this.email,
             userName : this.userName,
             isAdmin: this.isAdmin,
-            profilePhoto : this.profilePhoto
+            profilePhoto : this.profilePhoto,
 
         },process.env.TOKEN_SECRET_KEY
     )

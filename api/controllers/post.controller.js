@@ -3,6 +3,7 @@ import { ApiResponse } from "../utils/apiResponse.js";
 import { ApiError } from "../utils/apierror.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import { v2 as cloudinary } from "cloudinary";
 
 
 
@@ -59,7 +60,8 @@ const createPost = asyncHandler(async(req,res)=>{
             ...req.body,
             userId:req.user._id,
             slug,
-            postPhoto : uploadPost.url 
+            postPhoto : uploadPost.url ,
+            postPhotoPublicId : uploadPost.public_id
         }
     )
 
@@ -150,6 +152,24 @@ const deletePost = asyncHandler(async(req,res)=>{
         )
     }
 
+    const postCheck = await Post.findById(req.params.postId)
+
+    if(postCheck.postPhotoPublicId)
+    {
+      const deletedPostPhoto = await cloudinary.uploader
+      .destroy(postCheck.postPhotoPublicId).then
+      (result => result  ).catch
+             (error => error )
+
+      if(deletedPostPhoto.http_code == 400)
+          {
+              return res.status(400).json(
+                  new ApiError(400, "Something Went Wrong")
+              )
+          }
+      
+    }
+
     const deletedPost =  await Post.findByIdAndDelete(req.params.postId)
 
     if(!deletedPost)
@@ -200,6 +220,25 @@ const slug = req.body.title
     .toLowerCase()
     .replace(/[^a-zA-Z0-9-]/g, '');
 
+    const postCheck = await Post.findById(req.params.postId)
+
+    if(postCheck.postPhotoPublicId)
+    {
+      const deletedPostPhoto = await cloudinary.uploader
+      .destroy(postCheck.postPhotoPublicId).then
+      (result => result  ).catch
+             (error => error )
+
+      if(deletedPostPhoto.http_code == 400)
+          {
+              return res.status(400).json(
+                  new ApiError(400, "Something Went Wrong")
+              )
+          }
+      
+    }
+
+
     const postPhotoPath = req.file?.path
 
     const uploadPost = await uploadOnCloudinary(postPhotoPath)
@@ -213,7 +252,9 @@ const slug = req.body.title
                 
                 ...req.body,
                 slug,
-                postPhoto : uploadPost.url 
+                postPhoto : uploadPost.url ,
+                postPhotoPublicId : uploadPost.public_id
+
 
 
 

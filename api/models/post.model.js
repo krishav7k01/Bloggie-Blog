@@ -34,6 +34,10 @@ const postSchema = new mongoose.Schema(
             type: String,
             required: true,
           },
+          postPhotoPublicId:
+          {
+            type:String
+          }
 
 
     },
