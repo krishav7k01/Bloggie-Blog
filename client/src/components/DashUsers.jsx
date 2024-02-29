@@ -118,7 +118,7 @@ const DashUsers = () => {
             <Table hoverable className='shadow-md'>
              <Table.Head>
     
-              <Table.HeadCell>Date Updated</Table.HeadCell>
+              <Table.HeadCell>Create Date</Table.HeadCell>
               <Table.HeadCell>User Image</Table.HeadCell>
               <Table.HeadCell>Username</Table.HeadCell>
               <Table.HeadCell>Email</Table.HeadCell>
@@ -132,7 +132,7 @@ const DashUsers = () => {
     
               
                   <Table.Row className='bg-white dark:border-gray-700 dark:bg-gray-800' key={User.userName}>
-                  <Table.Cell>{new Date(getUser.updatedAt).toLocaleDateString()}</Table.Cell>
+                  <Table.Cell>{new Date(User.createdAt).toLocaleDateString()}</Table.Cell>
     
                   <Table.Cell>
     

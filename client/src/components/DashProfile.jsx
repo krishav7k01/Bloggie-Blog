@@ -10,9 +10,10 @@ import { useRef } from 'react'
 
 const DashProfile = () => {
 
-    const{currentUser,loading, error } = useSelector(state => state.user)
+    const{currentUser,loading} = useSelector(state => state.user)
     
     const[success,setSuccess] = useState()
+    const[error,setError]= useState()
     const[showModal,setShowModal] = useState(false)
     const[image, setImage] = useState()
     const[imageUrl, setImageUrl ] = useState(currentUser.profilePhoto)
@@ -62,6 +63,7 @@ const DashProfile = () => {
         {
 
           dispatch(updateFailure(error.response.data.message));
+          setError(error.response.data.message)
 
         }
 
