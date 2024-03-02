@@ -108,7 +108,38 @@ const likeComment = asyncHandler(async(req,res)=>{
 
 })
 
+const editComment = asyncHandler(async(req,res)=>{
+
+    const comment = await Comment.findById(req.params.commentId)
+
+  if(!comment)
+  {
+    return res.status(404).json(
+
+        new ApiError(404,"Comment Not Found")
+    )
+  }
+
+  if(comment.userId !== req.user._id)
+  {
+    return res.status(401).json(
+
+        new ApiError(401,"Unauthorized Access")
+    )
+  }
+
+  comment.comment = req.body.comment
+
+  await comment.save()
+
+  return res.status(200).json(
+    new ApiResponse(200,comment,"Comment Liked")
+  )
+
+})
+
 
 export {createComment,
     getcomments,
-    likeComment}
+    likeComment,
+    editComment}

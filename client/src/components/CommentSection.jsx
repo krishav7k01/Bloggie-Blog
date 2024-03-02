@@ -12,6 +12,7 @@ const CommentSection = ({postId}) => {
     const[commentError , setcommentError] = useState()
     const[postComment,setPostComment] = useState([])
 
+
     useEffect(()=>{
 
         const fetchComments = async () =>{
@@ -124,6 +125,26 @@ const CommentSection = ({postId}) => {
       }
     }
 
+    const onEdit = async (comment, editedComment) =>{
+
+      setPostComment(
+        postComment.map((c)=>
+          comment._id === c._id ? 
+          {
+            ...comment,
+            comment: editedComment,
+            
+          } : c
+
+
+        )
+      )
+
+
+
+
+    }
+
   return (
     <div className='max-w-2xl mx-auto w-full p-3'>
     { currentUser ?
@@ -151,9 +172,11 @@ const CommentSection = ({postId}) => {
 
         <form className='border border-teal-500 rounded-md p-3'>
 
-        <TextInput 
+        <textarea 
+        className=' w-full border border-gray-500 rounded-lg'
         placeholder='Add a comment...'
         maxLength='200'
+        rows='3'
         onChange={(e)=> getcommnet(e.target.value)}
         value={comment}
         />
@@ -192,7 +215,7 @@ const CommentSection = ({postId}) => {
             {
 
                 postComment.map(comment => (
-                    <Comment key={comment._id} comment={comment} onLike={likeComment}/>
+                    <Comment key={comment._id} comment={comment} onLike={likeComment} onEdit={onEdit}/>
                 ))
 
             }
