@@ -42,7 +42,7 @@ const CommentSection = ({postId}) => {
 
 
 
-    },[postId,comment])
+    },[postId])
 
     const handleSubmit = async () =>{
 
@@ -74,6 +74,7 @@ const CommentSection = ({postId}) => {
           if(data.success === true)
           {
             getcommnet("")
+            setPostComment([data.data, ...postComment])
           }
 
 
@@ -89,6 +90,38 @@ const CommentSection = ({postId}) => {
 
 
 
+    }
+
+    const likeComment = async (commentId) =>{
+
+      try {
+        const res = await axios.put(`/v1/api/comment/likecomment/${commentId}`)
+  
+        const data = await res.data
+  
+        if(data.success === true)
+        {
+          setPostComment(
+            postComment.map((comment)=>
+
+              commentId === comment._id ? 
+              {
+                ...comment,
+                likes: data.data.likes,
+                numberOfLikes : data.data.likes.length
+              } : comment
+
+
+            )
+          )
+         
+        }
+  
+      } catch (error) {
+
+        console.log(error.response.data.message)
+        
+      }
     }
 
   return (
@@ -159,7 +192,7 @@ const CommentSection = ({postId}) => {
             {
 
                 postComment.map(comment => (
-                    <Comment key={comment._id} comment={comment}/>
+                    <Comment key={comment._id} comment={comment} onLike={likeComment}/>
                 ))
 
             }
