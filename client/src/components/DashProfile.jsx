@@ -123,7 +123,7 @@ const DashProfile = () => {
 
         if(data.success)
         {
-          dispatch(signoutSuccess(data.data))
+          dispatch(signoutSuccess(null))
           navigate("/")
         }
 

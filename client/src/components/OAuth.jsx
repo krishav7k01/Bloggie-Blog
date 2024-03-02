@@ -33,7 +33,7 @@ const OAuth = () => {
             const data = await res.json()
             if(data.success === true)
             {
-                dispatch(signInSuccess(data))
+                dispatch(signInSuccess(data.data.user))
                 navigate('/')
             }
 

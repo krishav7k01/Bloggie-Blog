@@ -46,5 +46,32 @@ const createComment = asyncHandler(async(req,res) =>{
 
 })
 
+const getcomments = asyncHandler(async(req,res) =>{
 
-export {createComment}
+
+
+
+
+    const allComments = await Comment.find({
+        postId : req.params.postId}).sort({
+            createdAt: -1
+        });
+
+    if(!allComments)
+    {
+        return res.status(400).json(
+            new ApiError(400,"Something Went Wrong")
+        )
+    }
+
+    return res.status(200).json(
+        new ApiResponse(200,allComments,"All Comments Fetched Succesfully")
+    )
+
+
+
+})
+
+
+export {createComment,
+    getcomments}

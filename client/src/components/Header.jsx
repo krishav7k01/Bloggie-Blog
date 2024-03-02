@@ -10,6 +10,11 @@ import { signoutSuccess } from '../redux/user/userSlice';
 
 
 const Header = () => {
+    const{currentUser}= useSelector(state => state.user)
+    const{theme} = useSelector(state => state.theme)
+
+    const path = useLocation().pathname;
+    const dispatch = useDispatch()
 
     const navigate = useNavigate()
 
@@ -37,15 +42,7 @@ const Header = () => {
          
   
       }
-    
 
-    const{currentUser}= useSelector(state => state.user)
-    const{theme} = useSelector(state => state.theme)
-
-    const path = useLocation().pathname;
-    const dispatch = useDispatch()
-    
-    
   return (
     <Navbar className='border-b-2'>
         <NavLink to="/" className="self-center whitespace-nowrap text-sm sm:text-xl font-semibold dark:text-white " >

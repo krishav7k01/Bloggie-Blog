@@ -417,6 +417,23 @@ const adminDeleteUser = asyncHandler(async(req,res) => {
 
 })
 
+const getUserfromId = asyncHandler(async(req,res)=>{
+
+    const user = await User.findById(req.params.userId).select("-password")
+
+    if(!user){
+
+        return res.status(400).json(
+            new ApiError(400, "Something Went Wrong")
+        )
+    }
+
+    return res.status(200).json(
+        new ApiResponse(200,user,"User Feteched")
+    )
+
+})
+
 
 
 export {
@@ -428,6 +445,7 @@ export {
     deleteUser,
     userLogout,
     getUsers,
-    adminDeleteUser
+    adminDeleteUser,
+    getUserfromId
     
 }
