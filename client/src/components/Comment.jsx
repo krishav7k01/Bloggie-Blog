@@ -5,7 +5,7 @@ import { FaThumbsUp } from 'react-icons/fa';
 import { useSelector } from 'react-redux';
 import { Button } from 'flowbite-react';
 
-const Comment = ({comment, onLike, onEdit}) => {
+const Comment = ({comment, onLike, onEdit,onDelete}) => {
 
   const[user,setUser] = useState({})
   const{currentUser} = useSelector(state => state.user)
@@ -118,10 +118,7 @@ fetchUser()
               </Button>
             </div>
 
-
 </>
-
-
 
           ) : (
             <>
@@ -146,6 +143,14 @@ fetchUser()
               type='button' className=' text-gray-400 hover:text-red-500'>
                 Edit
               </button>
+}
+
+{
+    currentUser && (currentUser._id === comment.userId || currentUser.isAdmin) && 
+    <button type='button' className=' text-gray-400 hover:text-red-500' onClick={()=> onDelete(comment._id)} >
+      Delete
+    </button>
+
 }
              
           </div>

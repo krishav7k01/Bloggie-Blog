@@ -4,12 +4,15 @@ import axios from 'axios'
 import { Button, Spinner } from 'flowbite-react'
 import CallToAction from '../components/CallToAction'
 import CommentSection from '../components/CommentSection'
+import PostCard from '../components/PostCard.jsx'
 
 const PostPage = () => {
 
     const {postSlug} = useParams()
     const[post,setPost] = useState([])
     const[loading,setLoading]= useState(true)
+    const[recentArticle,setRecentArticle] = useState()
+    console.log(recentArticle)
 
   useEffect(()=>{
 
@@ -43,6 +46,34 @@ const PostPage = () => {
   
 
   },[postSlug])
+
+  useEffect(()=>{
+
+   try {
+        const fetchRecentPost = async () =>{
+
+
+      const res = await axios.get('/v1/api/post/getposts?limit=3')
+ 
+      const data= await res.data
+  
+      if(data.success === true)
+      {
+        console.log(data)
+        setRecentArticle(data.data.data)
+      }
+    }
+    fetchRecentPost()
+  
+    } catch (error) {
+ 
+     console.log(error.response.data.message)
+     
+    }
+
+    
+
+    },[])
 
 
 
@@ -94,6 +125,20 @@ if(!loading)
 
       <CommentSection postId={post._id}/>
 
+      <div className=' flex flex-col items-center justify-center mb-5 mt-10  w-full mx-auto'>
+      <h1 className=' my-6 font-extrabold text-gray-900 text-2xl'>Recent Article</h1>
+      <div className="flex flex-wrap gap-10 justify-center p-4">
+      {
+        
+        recentArticle && recentArticle.map((article) =>(
+
+          <PostCard key={article._id} post={article}/>
+
+        ))
+      }
+        </div>
+
+    </div>
 
     </main>
 

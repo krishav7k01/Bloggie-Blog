@@ -138,8 +138,49 @@ const editComment = asyncHandler(async(req,res)=>{
 
 })
 
+const deletecomment = asyncHandler(async(req,res) =>{
+
+    const commentFind = await Comment.findById(req.params.commentId)
+
+    if(!commentFind)
+    {
+        return res.status(404).json
+        (
+            new ApiError(404,"Comment Not Found")
+        )
+    }
+
+    if(req.user._id !== commentFind.userId && !req.user.isAdmin)
+    {
+
+        return res.status(401).json
+        (
+            new ApiError(401,"Unathorized Access")
+        )
+
+    }
+
+    const deletedcommnet =  await Comment.findByIdAndDelete(req.params.commentId)
+
+    if(!deletedcommnet)
+    {
+
+        return res.status(400).json
+        (
+            new ApiError(400,"Something Went Wrong")
+        )
+    }
+
+    return res.status(200).json(
+        new ApiResponse(200, "Comment Deleted Succesfully")
+    )
+
+
+})
+
 
 export {createComment,
     getcomments,
     likeComment,
-    editComment}
+    editComment,
+    deletecomment}
