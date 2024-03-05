@@ -4,7 +4,7 @@ import { NavLink } from 'react-router-dom'
 const PostCard = ({post}) => {
   
   return (
-<div className='group relative border  border-teal-500 hover:border-2 h-[300px] overflow-hidden rounded-lg sm:w-[400px] transition-all'>
+<div className='group relative border  border-teal-500 hover:border-2 h-[280px] overflow-hidden rounded-lg sm:w-[400px] transition-all'>
 
     <NavLink to={`/post/${post.slug}`}>
     <img src={post.postPhoto} alt="post Cover" className='h-[150px] w-full object-cover group-hover:h-[120px] transition-all duration-300 z-20'></img>
