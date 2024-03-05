@@ -187,7 +187,7 @@ const getAllComments = asyncHandler(async(req,res)=>{
 
     const startIndex = parseInt(req.query.startIndex) || 0;
     const limit = parseInt(req.query.limit) || 9;
-    const sort = req.query.sort === 'desc' ? -1 : 1
+    const sort = req.query.sort === 'aesc' ? 1 : -1
 
     const allComments = await Comment.find()
     .sort({createdAt : sort})

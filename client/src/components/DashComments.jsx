@@ -112,9 +112,9 @@ try {
          <Table.Head>
 
           <Table.HeadCell>Date Updated</Table.HeadCell>
-          <Table.HeadCell>User Image</Table.HeadCell>
-          <Table.HeadCell>Username</Table.HeadCell>
+          <Table.HeadCell>No Of Likes</Table.HeadCell>
           <Table.HeadCell>Comment</Table.HeadCell>
+          <Table.HeadCell>UserId</Table.HeadCell>
           <Table.HeadCell>PostId</Table.HeadCell>
           <Table.HeadCell>Delete</Table.HeadCell>
          </Table.Head>
@@ -128,22 +128,17 @@ try {
               <Table.Cell>{new Date(Comment.updatedAt).toLocaleDateString()}</Table.Cell>
 
               <Table.Cell>
-
-              
-                <img
-                src={currentUser.profilePhoto}
-                alt={currentUser.userName}
-                className='w-20 h-10 object-cover bg-gray-500'></img>
-                
-             
+                    {Comment.numberOfLikes}
               </Table.Cell>
-              <Table.Cell >
-              
-              <span className='font-medium text-gray-500'>{currentUser.userName}</span>
-              
-              </Table.Cell>
+            
 
               <Table.Cell>{Comment.comment}</Table.Cell>
+
+              <Table.Cell >
+              
+              <span className='font-medium text-gray-500'>{Comment.userId}</span>
+              
+              </Table.Cell>
 
               <Table.Cell>{Comment.postId}</Table.Cell>
 
