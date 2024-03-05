@@ -22,11 +22,7 @@ const PostCard = ({post}) => {
 
     </NavLink>
 
-
-
-
     </div>
-
 
 </div>
 

@@ -49,9 +49,6 @@ const createComment = asyncHandler(async(req,res) =>{
 const getcomments = asyncHandler(async(req,res) =>{
 
 
-
-
-
     const allComments = await Comment.find({
         postId : req.params.postId}).sort({
             createdAt: -1
@@ -178,9 +175,58 @@ const deletecomment = asyncHandler(async(req,res) =>{
 
 })
 
+const getAllComments = asyncHandler(async(req,res)=>{
+
+
+    if(!req.user.isAdmin)
+    {
+        return res.status(404).json(
+            new ApiError(400,"Unathorized Access")
+        )
+    }
+
+    const startIndex = parseInt(req.query.startIndex) || 0;
+    const limit = parseInt(req.query.limit) || 9;
+    const sort = req.query.sort === 'desc' ? -1 : 1
+
+    const allComments = await Comment.find()
+    .sort({createdAt : sort})
+    .limit(limit)
+    .skip(startIndex)
+
+    if(!allComments)
+    {
+        return res.status(400).json(
+            new ApiError(400,"Something Went Wrong")
+        )
+    }
+
+    const countComments = await Comment.countDocuments()
+
+    const now = new Date()
+
+    const oneMonthAgo = new Date(
+        now.getFullYear() , now.getMonth() -1 , now.getDate()
+    )
+
+    const lastMonthComments = await Comment.countDocuments({ createdAt : {$gte : oneMonthAgo}})
+
+
+
+    return res.status(200).json(
+        new ApiResponse(200,{
+            allComments,countComments , lastMonthComments 
+        }, "Comments Fetched Succesfully")
+    )
+
+
+
+})
+
 
 export {createComment,
     getcomments,
     likeComment,
     editComment,
-    deletecomment}
+    deletecomment,
+    getAllComments}
