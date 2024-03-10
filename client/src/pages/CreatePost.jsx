@@ -87,10 +87,10 @@ const handleSubmit = async (e) =>{
           <Select id='category' onChange={(e) => setCategory(e.target.value)} required>
 
         <option value='uncategorized'>Select a Category</option>
-        <option value='React'>React</option>
-        <option value='ExpressJs'>ExpressJs</option>
-        <option value='Configuration'>Configuration</option>
-        <option value='Javascript'>Javascript</option>
+        <option value='react'>React</option>
+        <option value='expressjs'>ExpressJs</option>
+        <option value='configuration'>Configuration</option>
+        <option value='javascript'>Javascript</option>
 
         
           </Select>
